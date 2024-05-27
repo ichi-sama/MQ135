@@ -24,8 +24,11 @@ v1.0 - First release
 */
 /**************************************************************************/
 
-MQ135::MQ135(uint8_t pin) {
+MQ135::MQ135(uint8_t pin, float RLOAD, float RZERO, float ATMOCO2) {
   _pin = pin;
+  _RLOAD = RLOAD;
+  _RZERO = RZERO;
+  _ATMOCO2 = ATMOCO2;
 }
 
 
@@ -52,7 +55,19 @@ float MQ135::getCorrectionFactor(float t, float h) {
 /**************************************************************************/
 float MQ135::getResistance() {
   int val = analogRead(_pin);
-  return ((1023./(float)val) * 5. - 1.)*RLOAD;
+  return ((1023.0/(float)val) * 5 - 1.)*_RLOAD;
+}
+
+/**************************************************************************/
+/*!
+@brief  ESP32 Get the resistance of the sensor, ie. the measurement value
+
+@return The sensor resistance in kOhm
+*/
+/**************************************************************************/
+float MQ135::getResistanceESP32() {
+  int val = analogRead(_pin);
+  return ((4095.0/(float)val) * (5.0/3.3) - 1.)*_RLOAD;
 }
 
 /**************************************************************************/
@@ -78,7 +93,7 @@ float MQ135::getCorrectedResistance(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+  return PARA * pow((getResistance()/_RZERO), -PARB);
 }
 
 /**************************************************************************/
@@ -93,7 +108,7 @@ float MQ135::getPPM() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
+  return PARA * pow((getCorrectedResistance(t, h)/_RZERO), -PARB);
 }
 
 /**************************************************************************/
@@ -104,7 +119,7 @@ float MQ135::getCorrectedPPM(float t, float h) {
 */
 /**************************************************************************/
 float MQ135::getRZero() {
-  return getResistance() * pow((ATMOCO2/PARA), (1./PARB));
+  return getResistance() * pow((_ATMOCO2/PARA), (1./PARB));
 }
 
 /**************************************************************************/
@@ -119,5 +134,5 @@ float MQ135::getRZero() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedRZero(float t, float h) {
-  return getCorrectedResistance(t, h) * pow((ATMOCO2/PARA), (1./PARB));
+  return getCorrectedResistance(t, h) * pow((_ATMOCO2/PARA), (1./PARB));
 }
