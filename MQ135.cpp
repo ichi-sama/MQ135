@@ -55,19 +55,7 @@ float MQ135::getCorrectionFactor(float t, float h) {
 /**************************************************************************/
 float MQ135::getResistance() {
   int val = analogRead(_pin);
-  return ((1023.0/(float)val) * 5 - 1.)*_RLOAD;
-}
-
-/**************************************************************************/
-/*!
-@brief  ESP32 Get the resistance of the sensor, ie. the measurement value
-
-@return The sensor resistance in kOhm
-*/
-/**************************************************************************/
-float MQ135::getResistanceESP32() {
-  int val = analogRead(_pin);
-  return ((4095.0/(float)val) * (5.0/3.3) - 1.)*_RLOAD;
+  return ((ADC_LVL/(float)val) * VOLTAGE - 1.)*_RLOAD;
 }
 
 /**************************************************************************/
