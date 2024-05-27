@@ -17,7 +17,7 @@ v1.0 - First release
 #if CONFIG_IDF_TARGET_ESP32||CONFIG_IDF_TARGET_ESP32S2||CONFIG_IDF_TARGET_ESP32S3||CONFIG_IDF_TARGET_ESP32C3||CONFIG_IDF_TARGET_ESP32H2
   #define ADC_LVL 4095.0
   #define VOLTAGE (5.0/3.3)
-  #pragma message "ESP32 Check"
+  #pragma message "ESP32 mode"
 #else
   #define ADC_LVL 1023.0
   #define VOLTAGE (5.0)
